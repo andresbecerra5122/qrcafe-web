@@ -1,0 +1,104 @@
+<div class="menu-page">
+  <!-- Header sticky -->
+  <header class="menu-header">
+    <div class="menu-header__inner">
+      <div class="menu-header__left">
+        <div class="menu-brand">QrCafe</div>
+
+        <div class="menu-chips">
+          <span *ngIf="tableToken" class="chip chip--primary">
+            Mesa {{ tableToken }}
+          </span>
+
+          <span class="chip chip--muted">Menú</span>
+        </div>
+      </div>
+
+      <div class="menu-header__right">
+        <span class="menu-meta">{{ restaurantId }}</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="menu-content">
+    <!-- Loading -->
+    <div *ngIf="loading" class="menu-state">
+      Cargando menú…
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="menu-state menu-state--error">
+      {{ error }}
+    </div>
+
+    <!-- Categories -->
+    <ng-container *ngIf="!loading && !error">
+      <section *ngFor="let c of categories" class="menu-category">
+        <h2 class="menu-category__title">{{ c.name }}</h2>
+
+        <div class="menu-grid">
+          <article
+            *ngFor="let p of c.products"
+            class="product-card"
+            [class.product-card--unavailable]="!p.isAvailable"
+          >
+            <div class="product-card__img">
+              <img *ngIf="p.imageUrl; else ph" [src]="p.imageUrl" class="h-full w-full object-cover" alt="" />
+                <ng-template #ph>
+                    <div class="product-card__imgph">🍽️</div>
+                </ng-template>
+            </div>
+
+            <div class="product-card__body">
+              <div class="product-card__top">
+                <h3 class="product-card__name">{{ p.name }}</h3>
+                <div class="product-card__price">{{ formatCOP(p.price) }}</div>
+              </div>
+
+              <p *ngIf="p.description" class="product-card__desc">
+                {{ p.description }}
+              </p>
+
+              <div class="product-card__badges">
+                <ng-container *ngIf="p.isAvailable; else noStock">
+                  <span class="badge badge--ok">Disponible</span>
+                </ng-container>
+
+                <ng-template #noStock>
+                  <span class="badge badge--warn">No disponible</span>
+                </ng-template>
+              </div>
+              <div class="product-actions">
+                <ng-container *ngIf="qtyOf(p.id) === 0; else qtyCtrl">
+                  <button class="btn btn--primary" (click)="addToCart(p)" [disabled]="!p.isAvailable">
+                    Agregar
+                  </button>
+                </ng-container>
+
+                <ng-template #qtyCtrl>
+                  <div class="qty">
+                    <button class="btn btn--ghost" (click)="dec(p)">−</button>
+                    <span class="qty__num">{{ qtyOf(p.id) }}</span>
+                    <button class="btn btn--ghost" (click)="inc(p)">+</button>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </ng-container>
+  </main>
+  <div class="cart-bar" *ngIf="cart.getCount() > 0">
+    <div class="cart-bar__inner">
+      <div class="cart-bar__left">
+        <div class="cart-bar__count">{{ cart.getCount() }} item(s)</div>
+        <div class="cart-bar__total">{{ formatCOP(cart.getSubtotal()) }}</div>
+      </div>
+
+      <a class="btn btn--primary" [routerLink]="['/checkout']">
+        Ir a checkout
+      </a>
+    </div>
+  </div>
+</div>
