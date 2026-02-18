@@ -10,6 +10,8 @@ export interface CartItem {
 export interface CartState {
   restaurantId: string | null;
   tableToken: string | null;
+  tableNumber: number | null; 
+  currency: string | null; 
   orderType: 'DINE_IN' | 'TAKEAWAY' | null;
   items: CartItem[];
 }

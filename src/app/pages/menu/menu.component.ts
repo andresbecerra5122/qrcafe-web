@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MenuService } from '../../services/menu.service';
 import { MenuProduct, MenuResponse } from '../../models/menu/menu.models';
 import { CartService } from '../../services/cart.service';
+import { WaiterCallService } from '../../services/waiter-call.service';
 import { RouterModule } from '@angular/router';
 
 
@@ -26,7 +27,9 @@ export class MenuComponent implements OnInit {
   table!: string | null;
 
   restaurantId!: string;
+  restaurantName: string = '';
   tableToken: string | null = null;
+  tableNumber: number | null = null;
 
   loading = true;
   error: string | null = null;
@@ -35,15 +38,20 @@ export class MenuComponent implements OnInit {
 
   menuData: any = null;
 
+  waiterCalling = false;
+  waiterCalled = false;
+  waiterCallError: string | null = null;
+
   constructor(private route: ActivatedRoute,
     private menuService: MenuService,
-    public cart: CartService
+    public cart: CartService,
+    private waiterCallService: WaiterCallService
   ) {}
 
   ngOnInit(): void {
     this.restaurantId = this.route.snapshot.queryParamMap.get('restaurantId') ?? '';
     this.tableToken = this.route.snapshot.queryParamMap.get('table');
-    this.cart.initContext(this.restaurantId, this.tableToken);
+   
 
     if (!this.restaurantId) {
       this.loading = false;
@@ -54,7 +62,28 @@ export class MenuComponent implements OnInit {
      this.menuService.getMenuByRestaurantId(this.restaurantId).subscribe({
       next: (res) => {
         this.categories = this.buildCategoryVM(res);
+        this.restaurantName = res.restaurantName ?? '';
         this.loading = false;
+        const currency = res.currency ?? null;
+
+        //this.cart.initContext(this.restaurantId, this.tableToken, res.tableNumber, res.currency ?? null);
+        if (this.tableToken) {
+          this.menuService.resolveTable(this.restaurantId, this.tableToken ?? '').subscribe({
+        next: (t) => {
+          this.tableToken = t.token;
+          this.tableNumber = t.number;
+          this.cart.initContext(this.restaurantId, this.tableToken, t.number, currency);
+      },
+      error: () => {
+        // mesa inválida: guardamos number pero token null (UI puede mostrar warning)
+        this.tableToken = null;
+        this.cart.initContext(this.restaurantId, null, this.tableNumber, currency);
+      }
+    });
+  } else {
+    // takeaway o sin mesa
+    this.cart.initContext(this.restaurantId, null, null, currency);
+  }
       },
       error: (err) => {
         console.error(err);
@@ -107,4 +136,29 @@ export class MenuComponent implements OnInit {
     return this.cart.state.items.find(x => x.productId === productId)?.qty ?? 0;
   }
 
+  formatMoney(value: number): string {
+    const currency = this.cart.state.currency ?? 'COP';
+    const locale = currency === 'EUR' ? 'es-ES' : 'es-CO';
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
+  }
+
+  callWaiter() {
+    if (this.waiterCalling || this.waiterCalled) return;
+
+    this.waiterCalling = true;
+    this.waiterCallError = null;
+
+    this.waiterCallService.callWaiter(this.restaurantId, this.tableToken).subscribe({
+      next: () => {
+        this.waiterCalling = false;
+        this.waiterCalled = true;
+        setTimeout(() => { this.waiterCalled = false; }, 30_000);
+      },
+      error: () => {
+        this.waiterCalling = false;
+        this.waiterCallError = 'No se pudo llamar al mesero. Intenta de nuevo.';
+        setTimeout(() => { this.waiterCallError = null; }, 5_000);
+      }
+    });
+  }
 }

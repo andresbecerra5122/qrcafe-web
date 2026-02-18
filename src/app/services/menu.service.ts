@@ -15,4 +15,10 @@ export class MenuService {
   getMenuByRestaurantId(restaurantId: string): Observable<MenuResponse> {
     return this.http.get<MenuResponse>(`${this.base}/public/restaurants/${encodeURIComponent(restaurantId)}/menu`);
   }
+
+  resolveTable(restaurantId: string, number: string) {
+  return this.http.get<{ number: number; token: string }>(
+    `${this.base}/public/restaurants/${restaurantId}/tables/resolve?number=${encodeURIComponent(number)}`
+  );
+}
 }

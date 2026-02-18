@@ -1,5 +1,7 @@
 export interface MenuResponse {
   restaurantId: string;
+  restaurantName: string;
+  currency: string;
   categories: MenuCategory[];
   products: MenuProduct[];
 }

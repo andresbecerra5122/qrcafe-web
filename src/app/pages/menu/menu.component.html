@@ -3,11 +3,11 @@
   <header class="menu-header">
     <div class="menu-header__inner">
       <div class="menu-header__left">
-        <div class="menu-brand">QrCafe</div>
+        <div class="menu-brand">{{ restaurantName || 'QrCafe' }}</div>
 
         <div class="menu-chips">
           <span *ngIf="tableToken" class="chip chip--primary">
-            Mesa {{ tableToken }}
+            Mesa {{ tableNumber ?? '' }}
           </span>
 
           <span class="chip chip--muted">Menú</span>
@@ -15,10 +15,23 @@
       </div>
 
       <div class="menu-header__right">
-        <span class="menu-meta">{{ restaurantId }}</span>
+        <button
+          class="btn-waiter"
+          [class.btn-waiter--success]="waiterCalled"
+          [disabled]="waiterCalling || waiterCalled"
+          (click)="callWaiter()">
+          <ng-container *ngIf="waiterCalling">Llamando...</ng-container>
+          <ng-container *ngIf="waiterCalled">✓ Mesero notificado</ng-container>
+          <ng-container *ngIf="!waiterCalling && !waiterCalled">🔔 Llamar mesero</ng-container>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Waiter call error toast -->
+  <div *ngIf="waiterCallError" class="waiter-toast waiter-toast--error">
+    {{ waiterCallError }}
+  </div>
 
   <main class="menu-content">
     <!-- Loading -->
@@ -52,7 +65,7 @@
             <div class="product-card__body">
               <div class="product-card__top">
                 <h3 class="product-card__name">{{ p.name }}</h3>
-                <div class="product-card__price">{{ formatCOP(p.price) }}</div>
+                <div class="product-card__price">{{ formatMoney(p.price) }}</div>
               </div>
 
               <p *ngIf="p.description" class="product-card__desc">
@@ -93,7 +106,7 @@
     <div class="cart-bar__inner">
       <div class="cart-bar__left">
         <div class="cart-bar__count">{{ cart.getCount() }} item(s)</div>
-        <div class="cart-bar__total">{{ formatCOP(cart.getSubtotal()) }}</div>
+        <div class="cart-bar__total">{{ formatMoney(cart.getSubtotal()) }}</div>
       </div>
 
       <a class="btn btn--primary" [routerLink]="['/checkout']">

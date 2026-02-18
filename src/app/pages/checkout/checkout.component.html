@@ -1,0 +1,84 @@
+<div class="checkout">
+  <h1 class="title">Checkout</h1>
+
+  <div class="section">
+    <h2>Resumen</h2>
+
+    <div *ngFor="let item of cart.items" class="item">
+      <span>{{ item.name }} × {{ item.qty }}</span>
+      <span>{{ item.price * item.qty | currency:currency }}</span>
+    </div>
+
+    <div class="total">
+        <span class="total-label">Total</span>
+        <span class="total-amount">{{ subtotal() | currency:currency }}</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Tipo de orden</h2>
+
+    <div class="order-type-grid">
+        <button
+        type="button"
+        class="order-type-card"
+        [class.active]="orderType() === 'DINE_IN'"
+        (click)="orderType.set('DINE_IN')">
+
+        <div class="radio-dot" [class.on]="orderType() === 'DINE_IN'"></div>
+
+        <div class="card-text">
+            <div class="card-title">Para mesa</div>
+            <div class="card-subtitle">Te llevamos la comida a tu mesa</div>
+        </div>
+
+        <div class="chip">DINE IN</div>
+        </button>
+
+        <button
+        type="button"
+        class="order-type-card"
+        [class.active]="orderType() === 'TAKEAWAY'"
+        (click)="orderType.set('TAKEAWAY')">
+
+        <div class="radio-dot" [class.on]="orderType() === 'TAKEAWAY'"></div>
+
+        <div class="card-text">
+            <div class="card-title">Para llevar</div>
+            <div class="card-subtitle">Retiras en mostrador</div>
+        </div>
+
+        <div class="chip">TAKEAWAY</div>
+        </button>
+    </div>
+
+    <!-- Solo informativo: mostrar mesa si aplica -->
+    <div *ngIf="orderType() === 'DINE_IN' && cart.tableNumber" class="hint">
+        Mesa detectada: <b>{{ cart.tableNumber }}</b>
+    </div>
+  </div>
+
+
+  <div class="section">
+    <input
+      type="text"
+      placeholder="Nombre (opcional)"
+      (input)="customerName.set($any($event.target).value)" />
+
+    <textarea
+      placeholder="Notas (opcional)"
+      (input)="notes.set($any($event.target).value)">
+    </textarea>
+  </div>
+
+  <div *ngIf="error()" class="error">
+    {{ error() }}
+  </div>
+
+  <button
+    class="btn"
+    [disabled]="loading()"
+    (click)="submit()">
+    {{ loading() ? 'Creando orden...' : 'Confirmar orden' }}
+  </button>
+</div>

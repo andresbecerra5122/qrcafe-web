@@ -1,0 +1,103 @@
+.checkout {
+  @apply max-w-xl mx-auto p-4 sm:p-6 space-y-6;
+}
+
+.title {
+  @apply text-3xl font-extrabold tracking-tight text-slate-900 text-center;
+}
+
+.section {
+  @apply bg-white rounded-2xl p-4 sm:p-5 space-y-4 ring-1 ring-slate-200 shadow-sm;
+}
+
+.section-title {
+  @apply text-base font-semibold text-slate-900;
+}
+
+.item {
+  @apply flex justify-between text-sm text-slate-700;
+}
+
+.item span:last-child {
+  @apply font-semibold text-slate-900;
+}
+
+.total {
+  @apply flex justify-between font-extrabold text-lg pt-3 border-t border-slate-200;
+}
+
+.total-label {
+  @apply text-slate-900;
+}
+
+.total-amount {
+  @apply text-slate-900;
+}
+
+.order-type-grid {
+  @apply grid grid-cols-1 gap-3;
+}
+
+.order-type-card {
+  @apply w-full text-left flex items-center gap-3 rounded-2xl border border-slate-200 p-4
+  hover:border-slate-300 hover:bg-slate-50 transition;
+}
+
+.order-type-card.active {
+  @apply border-slate-900 bg-slate-50;
+}
+
+.radio-dot {
+  @apply h-5 w-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0;
+}
+
+.radio-dot.on {
+  @apply border-slate-900;
+}
+
+.radio-dot.on::after {
+  content: "";
+  @apply h-2.5 w-2.5 rounded-full bg-slate-900 block;
+}
+
+.card-text {
+  @apply flex-1 min-w-0;
+}
+
+.card-title {
+  @apply font-bold text-slate-900;
+}
+
+.card-subtitle {
+  @apply text-xs text-slate-600 mt-1;
+}
+
+.chip {
+  @apply text-[10px] font-bold px-2 py-1 rounded-full bg-slate-900 text-white;
+}
+
+.hint {
+  @apply text-xs text-slate-600;
+}
+
+input, textarea {
+  @apply w-full rounded-xl border border-slate-200 p-3 text-sm outline-none
+  focus:ring-2 focus:ring-slate-300 focus:border-slate-300;
+}
+
+textarea {
+  @apply min-h-[96px];
+}
+
+.btn {
+  @apply w-full rounded-2xl bg-slate-900 text-white py-3 font-extrabold
+  hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm;
+}
+
+.error {
+  @apply text-red-600 text-sm font-semibold;
+}
+
+.order-type-card:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
