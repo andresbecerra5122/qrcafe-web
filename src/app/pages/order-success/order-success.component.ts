@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { OrderService } from '../../services/order.service';
 import { OrderPublicDto } from '../../models/order.model';
@@ -11,7 +11,7 @@ type PageState = 'loading' | 'created' | 'in_progress' | 'ready' | 'delivered' |
 @Component({
   selector: 'app-order-success',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './order-success.component.html',
   styleUrl: './order-success.component.scss'
 })
@@ -44,9 +44,11 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
     }
   });
 
-  menuQueryParams: Record<string, string> = {};
+  private menuUrl = '';
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private orderId: string | null = null;
+
+  private readonly activeStatuses = ['CREATED', 'IN_PROGRESS', 'READY', 'DELIVERED', 'PAYMENT_PENDING'];
 
   constructor(
     private route: ActivatedRoute,
@@ -54,14 +56,24 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
     private cartService: CartService
   ) {}
 
+  /** Fix 4: warn before closing/refreshing when order is active */
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    const status = this.order()?.status;
+    if (status && this.activeStatuses.includes(status)) {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit() {
     const cart = this.cartService.state;
-    if (cart.restaurantId) {
-      this.menuQueryParams['restaurantId'] = cart.restaurantId;
-    }
-    if (cart.tableToken) {
-      this.menuQueryParams['table'] = cart.tableToken;
-    }
+    const params = new URLSearchParams();
+    if (cart.restaurantId) params.set('restaurantId', cart.restaurantId);
+    if (cart.tableToken) params.set('table', cart.tableToken);
+    this.menuUrl = `/menu${params.toString() ? '?' + params.toString() : ''}`;
+
+    // Fix 1: replace history so back button won't go to checkout
+    history.replaceState(null, '', location.href);
 
     this.orderId = this.route.snapshot.paramMap.get('orderId');
     if (!this.orderId) {
@@ -100,6 +112,16 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  orderAgain() {
+    window.open(this.menuUrl, '_blank');
+  }
+
+  viewInvoice() {
+    if (this.orderId) {
+      window.open(`/invoice/${this.orderId}`, '_blank');
+    }
   }
 
   requestWaiter(method: 'CASH' | 'CARD') {

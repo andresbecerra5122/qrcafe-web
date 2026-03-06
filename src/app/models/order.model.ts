@@ -7,7 +7,18 @@ export interface OrderPublicDto {
   paymentStatus: string | null;
   paymentMethod: string | null;
   currency: string;
+  subtotal: number;
+  tax: number;
   total: number;
   createdAt: string;
   orderNumber: number;
+  restaurantName: string;
+  items: OrderItemPublicDto[];
+}
+
+export interface OrderItemPublicDto {
+  productName: string;
+  qty: number;
+  unitPrice: number;
+  lineTotal: number;
 }

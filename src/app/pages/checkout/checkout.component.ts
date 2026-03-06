@@ -69,7 +69,7 @@ customerName = signal('');
     this.orderService.createOrder(payload).subscribe({
       next: (res) => {
         this.cartService.clear();
-        this.router.navigate(['/order-success', res.orderId]);
+        this.router.navigate(['/order-success', res.orderId], { replaceUrl: true });
       },
       error: (err) => {
         this.error.set(err?.error?.message ?? 'Error creando la orden');

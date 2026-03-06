@@ -1,0 +1,134 @@
+.invoice-page {
+  @apply max-w-md mx-auto p-4 sm:p-6;
+}
+
+/* ===== Action bar ===== */
+
+.action-bar {
+  @apply flex justify-center gap-3 mb-6;
+}
+
+.btn-print {
+  @apply px-6 py-3 rounded-2xl bg-amber-600 text-white font-bold text-sm
+    hover:bg-amber-700 shadow-sm hover:shadow-md transition-all
+    border-none cursor-pointer;
+}
+
+/* ===== States ===== */
+
+.loading {
+  @apply text-center py-12 text-stone-500;
+}
+
+.error {
+  @apply text-center py-12 text-red-600 font-semibold;
+}
+
+/* ===== Receipt ===== */
+
+.receipt {
+  @apply bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-4;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.receipt-header {
+  @apply text-center space-y-1;
+}
+
+.restaurant-name {
+  @apply text-xl font-bold text-stone-900;
+}
+
+.receipt-meta {
+  @apply text-xs text-stone-500;
+}
+
+.divider {
+  @apply border-t border-dashed border-stone-300 my-3;
+}
+
+/* ===== Items table ===== */
+
+.items-table {
+  @apply w-full text-sm;
+  border-collapse: collapse;
+}
+
+.items-table th {
+  @apply text-left text-xs text-stone-500 font-semibold pb-2 border-b border-stone-200;
+}
+
+.items-table td {
+  @apply py-1.5 text-stone-800;
+}
+
+.col-name {
+  @apply pr-2;
+}
+
+.col-qty {
+  @apply text-center w-10;
+}
+
+.col-price {
+  @apply text-right w-20;
+}
+
+.col-total {
+  @apply text-right w-20 font-semibold;
+}
+
+/* ===== Totals ===== */
+
+.totals {
+  @apply space-y-1;
+}
+
+.total-row {
+  @apply flex justify-between text-sm text-stone-700;
+}
+
+.total-final {
+  @apply text-base font-bold text-stone-900 pt-1;
+}
+
+/* ===== Payment / Footer ===== */
+
+.payment-info {
+  @apply flex justify-between text-sm text-stone-700;
+}
+
+.payment-method {
+  @apply font-semibold;
+}
+
+.receipt-footer {
+  @apply text-center text-xs text-stone-400 pt-2;
+}
+
+/* ===== Print styles ===== */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .invoice-page {
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .receipt {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 16px;
+  }
+}

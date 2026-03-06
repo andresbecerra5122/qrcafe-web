@@ -8,58 +8,71 @@
   <!-- Error -->
   <div *ngIf="pageState() === 'error'" class="error-card">
     <p class="error-text">{{ error() }}</p>
-    <a routerLink="/menu" [queryParams]="menuQueryParams" class="btn">Volver al menú</a>
   </div>
 
   <ng-container *ngIf="order(); let o">
 
     <!-- ===== CREATED ===== -->
     <div *ngIf="pageState() === 'created'" class="success-header">
-      <div class="state-icon created-icon">✓</div>
+      <div class="state-icon created-icon">&#10003;</div>
       <h1 class="title">¡Orden recibida!</h1>
       <p class="subtitle">Tu pedido #{{ o.orderNumber }} fue recibido. La cocina lo preparará pronto.</p>
     </div>
 
     <!-- ===== IN PROGRESS ===== -->
     <div *ngIf="pageState() === 'in_progress'" class="success-header">
-      <div class="state-icon progress-icon">🍳</div>
+      <div class="state-icon progress-icon">&#127859;</div>
       <h1 class="title">En preparación</h1>
       <p class="subtitle">Tu pedido #{{ o.orderNumber }} se está preparando</p>
     </div>
 
     <!-- ===== READY ===== -->
     <div *ngIf="pageState() === 'ready'" class="success-header">
-      <div class="state-icon ready-icon">✓</div>
+      <div class="state-icon ready-icon">&#10003;</div>
       <h1 class="title">¡Tu pedido está listo!</h1>
       <p class="subtitle">Pedido #{{ o.orderNumber }} listo para entregar</p>
     </div>
 
     <!-- ===== DELIVERED ===== -->
     <div *ngIf="pageState() === 'delivered'" class="success-header">
-      <div class="state-icon delivered-icon">🍽</div>
+      <div class="state-icon delivered-icon">&#127869;</div>
       <h1 class="title">Pedido entregado</h1>
       <p class="subtitle">¡Buen provecho! Cuando estés listo, pide la cuenta.</p>
     </div>
 
     <!-- ===== PAYMENT PENDING (waiter requested) ===== -->
     <div *ngIf="pageState() === 'payment_pending'" class="success-header">
-      <div class="state-icon pending-icon">⏳</div>
+      <div class="state-icon pending-icon">&#9203;</div>
       <h1 class="title">Mesero en camino</h1>
       <p class="subtitle">Un mesero se acercará a tu mesa para cobrar</p>
     </div>
 
     <!-- ===== PAID ===== -->
     <div *ngIf="pageState() === 'paid'" class="success-header">
-      <div class="state-icon paid-icon">✓</div>
+      <div class="state-icon paid-icon">&#10003;</div>
       <h1 class="title">¡Pago completado!</h1>
       <p class="subtitle">Gracias por tu visita. Pedido #{{ o.orderNumber }}</p>
     </div>
 
+    <!-- ===== INVOICE ALERT (shown when PAID) ===== -->
+    <div *ngIf="pageState() === 'paid'" class="alert-card alert-invoice">
+      <p class="alert-title">&#128196; Tu factura está lista</p>
+      <p class="alert-body">Puedes ver e imprimir tu factura digital o guardarla como PDF.</p>
+      <button class="btn-invoice" (click)="viewInvoice()">Ver factura</button>
+    </div>
+
     <!-- ===== CANCELLED ===== -->
     <div *ngIf="pageState() === 'cancelled'" class="success-header">
-      <div class="state-icon cancelled-icon">✕</div>
+      <div class="state-icon cancelled-icon">&#10005;</div>
       <h1 class="title">Pedido cancelado</h1>
       <p class="subtitle">Tu pedido #{{ o.orderNumber }} fue cancelado</p>
+    </div>
+
+    <!-- ===== Do-not-close warning (active orders) ===== -->
+    <div *ngIf="pageState() !== 'paid' && pageState() !== 'cancelled'"
+         class="alert-card alert-warning">
+      <p class="alert-title">&#9888; No cierres esta página</p>
+      <p class="alert-body">Tu pedido aún está en proceso. Mantén esta página abierta para seguir el estado y solicitar la cuenta.</p>
     </div>
 
     <!-- ===== STATUS BADGE ===== -->
@@ -70,16 +83,32 @@
       </div>
     </div>
 
+    <!-- ===== ORDER ITEMS ===== -->
+    <div class="section" *ngIf="o.items && o.items.length > 0">
+      <h2 class="section-title">Tu pedido</h2>
+      <div *ngFor="let item of o.items" class="item-row">
+        <div class="item-info">
+          <span class="item-name">{{ item.productName }}</span>
+          <span class="item-qty">x{{ item.qty }}</span>
+        </div>
+        <span class="item-price">{{ item.lineTotal | currency:currency() }}</span>
+      </div>
+      <div class="detail-row total-row">
+        <span>Total</span>
+        <span>{{ o.total | currency:currency() }}</span>
+      </div>
+    </div>
+
     <!-- ===== REQUEST WAITER (shown when DELIVERED) ===== -->
     <div *ngIf="pageState() === 'delivered'" class="alert-card alert-info">
       <p class="alert-title">Pedir la cuenta</p>
       <p class="alert-body">Elige cómo deseas pagar y un mesero irá a tu mesa.</p>
       <div class="payment-buttons">
         <button class="btn-cash" [disabled]="requestingPayment()" (click)="requestWaiter('CASH')">
-          {{ requestingPayment() ? 'Solicitando...' : '💵 Efectivo' }}
+          {{ requestingPayment() ? 'Solicitando...' : '&#128181; Efectivo' }}
         </button>
         <button class="btn-card" [disabled]="requestingPayment()" (click)="requestWaiter('CARD')">
-          {{ requestingPayment() ? 'Solicitando...' : '💳 Tarjeta' }}
+          {{ requestingPayment() ? 'Solicitando...' : '&#128179; Tarjeta' }}
         </button>
       </div>
       <p *ngIf="requestError()" class="error-text mt-2">{{ requestError() }}</p>
@@ -109,10 +138,6 @@
         <span>Tipo</span>
         <span>{{ o.orderType === 'DINE_IN' ? 'Para mesa' : 'Para llevar' }}</span>
       </div>
-      <div class="detail-row total-row">
-        <span>Total</span>
-        <span>{{ o.total | currency:currency() }}</span>
-      </div>
     </div>
 
     <!-- ===== HINT ===== -->
@@ -121,6 +146,6 @@
       Esta página se actualiza automáticamente cada 10 segundos.
     </p>
 
-    <a routerLink="/menu" [queryParams]="menuQueryParams" class="btn">Ordenar de nuevo</a>
+    <button class="btn" (click)="orderAgain()">Ordenar de nuevo</button>
   </ng-container>
 </div>
