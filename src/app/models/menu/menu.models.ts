@@ -2,6 +2,10 @@ export interface MenuResponse {
   restaurantId: string;
   restaurantName: string;
   currency: string;
+  enableDineIn: boolean;
+  enableDelivery: boolean;
+  enableDeliveryCash: boolean;
+  enableDeliveryCard: boolean;
   categories: MenuCategory[];
   products: MenuProduct[];
 }

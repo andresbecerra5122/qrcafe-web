@@ -9,6 +9,9 @@
           <span *ngIf="tableToken" class="chip chip--primary">
             Mesa {{ tableNumber ?? '' }}
           </span>
+          <span *ngIf="menuMode === 'delivery'" class="chip chip--primary">
+            Delivery
+          </span>
 
           <span class="chip chip--muted">Menú</span>
         </div>
@@ -16,6 +19,7 @@
 
       <div class="menu-header__right">
         <button
+          *ngIf="canCallWaiter()"
           class="btn-waiter"
           [class.btn-waiter--success]="waiterCalled"
           [disabled]="waiterCalling || waiterCalled"
@@ -34,6 +38,10 @@
   </div>
 
   <main class="menu-content">
+    <div *ngIf="menuMode === 'delivery'" class="delivery-banner" role="status" aria-live="polite">
+      El pago es contraentrega al recibir la orden
+    </div>
+
     <!-- Loading -->
     <div *ngIf="loading" class="menu-state">
       Cargando menú…

@@ -12,6 +12,10 @@ export interface CartState {
   tableToken: string | null;
   tableNumber: number | null; 
   currency: string | null; 
-  orderType: 'DINE_IN' | 'TAKEAWAY' | null;
+  enableDineIn: boolean;
+  enableDelivery: boolean;
+  enableDeliveryCash: boolean;
+  enableDeliveryCard: boolean;
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY' | null;
   items: CartItem[];
 }

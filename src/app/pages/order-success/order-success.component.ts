@@ -6,7 +6,7 @@ import { OrderService } from '../../services/order.service';
 import { OrderPublicDto } from '../../models/order.model';
 import { CartService } from '../../services/cart.service';
 
-type PageState = 'loading' | 'created' | 'in_progress' | 'ready' | 'delivered' | 'payment_pending' | 'paid' | 'cancelled' | 'error';
+type PageState = 'loading' | 'created' | 'in_progress' | 'ready' | 'out_for_delivery' | 'delivered' | 'payment_pending' | 'paid' | 'cancelled' | 'error';
 
 @Component({
   selector: 'app-order-success',
@@ -36,6 +36,7 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
       case 'CREATED':          return 'created';
       case 'IN_PROGRESS':      return 'in_progress';
       case 'READY':            return 'ready';
+      case 'OUT_FOR_DELIVERY': return 'out_for_delivery';
       case 'DELIVERED':        return 'delivered';
       case 'PAYMENT_PENDING':  return 'payment_pending';
       case 'PAID':             return 'paid';
@@ -48,7 +49,7 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private orderId: string | null = null;
 
-  private readonly activeStatuses = ['CREATED', 'IN_PROGRESS', 'READY', 'DELIVERED', 'PAYMENT_PENDING'];
+  private readonly activeStatuses = ['CREATED', 'IN_PROGRESS', 'READY', 'OUT_FOR_DELIVERY', 'DELIVERED', 'PAYMENT_PENDING'];
 
   constructor(
     private route: ActivatedRoute,
@@ -156,7 +157,8 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
       PAID: 'Pagada',
       IN_PROGRESS: 'En preparación',
       READY: 'Lista',
-      DELIVERED: 'Entregada',
+      OUT_FOR_DELIVERY: 'En reparto',
+      DELIVERED: 'Entregado',
       CANCELLED: 'Cancelada'
     };
     return labels[status] ?? status;

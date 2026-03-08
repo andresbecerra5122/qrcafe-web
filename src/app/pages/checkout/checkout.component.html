@@ -23,7 +23,8 @@
         type="button"
         class="order-type-card"
         [class.active]="orderType() === 'DINE_IN'"
-        (click)="orderType.set('DINE_IN')">
+        [disabled]="!canDineIn()"
+        (click)="selectOrderType('DINE_IN')">
 
         <div class="radio-dot" [class.on]="orderType() === 'DINE_IN'"></div>
 
@@ -39,7 +40,7 @@
         type="button"
         class="order-type-card"
         [class.active]="orderType() === 'TAKEAWAY'"
-        (click)="orderType.set('TAKEAWAY')">
+        (click)="selectOrderType('TAKEAWAY')">
 
         <div class="radio-dot" [class.on]="orderType() === 'TAKEAWAY'"></div>
 
@@ -49,6 +50,23 @@
         </div>
 
         <div class="chip">TAKEAWAY</div>
+        </button>
+
+        <button
+        *ngIf="canDelivery()"
+        type="button"
+        class="order-type-card"
+        [class.active]="orderType() === 'DELIVERY'"
+        (click)="selectOrderType('DELIVERY')">
+
+        <div class="radio-dot" [class.on]="orderType() === 'DELIVERY'"></div>
+
+        <div class="card-text">
+            <div class="card-title">Domicilio</div>
+            <div class="card-subtitle">Enviamos a tu dirección</div>
+        </div>
+
+        <div class="chip">DOMICILIO</div>
         </button>
     </div>
 
@@ -69,6 +87,52 @@
       placeholder="Notas (opcional)"
       (input)="notes.set($any($event.target).value)">
     </textarea>
+  </div>
+
+  <div class="section" *ngIf="orderType() === 'DELIVERY'">
+    <input
+      type="text"
+      placeholder="Dirección de entrega"
+      (input)="deliveryAddress.set($any($event.target).value)" />
+    <input
+      type="text"
+      placeholder="Referencia (opcional)"
+      (input)="deliveryReference.set($any($event.target).value)" />
+    <input
+      type="text"
+      placeholder="Teléfono de contacto"
+      (input)="deliveryPhone.set($any($event.target).value)" />
+
+    <div class="section-title">Forma de pago</div>
+    <div class="order-type-grid">
+      <button
+        *ngIf="canDeliveryCash()"
+        type="button"
+        class="order-type-card"
+        [class.active]="deliveryPaymentMethod() === 'CASH'"
+        (click)="selectDeliveryPaymentMethod('CASH')">
+        <div class="radio-dot" [class.on]="deliveryPaymentMethod() === 'CASH'"></div>
+        <div class="card-text">
+          <div class="card-title">Efectivo</div>
+          <div class="card-subtitle">Pago contraentrega</div>
+        </div>
+        <div class="chip">CASH</div>
+      </button>
+
+      <button
+        *ngIf="canDeliveryCard()"
+        type="button"
+        class="order-type-card"
+        [class.active]="deliveryPaymentMethod() === 'CARD'"
+        (click)="selectDeliveryPaymentMethod('CARD')">
+        <div class="radio-dot" [class.on]="deliveryPaymentMethod() === 'CARD'"></div>
+        <div class="card-text">
+          <div class="card-title">Tarjeta</div>
+          <div class="card-subtitle">Pago contraentrega</div>
+        </div>
+        <div class="chip">CARD</div>
+      </button>
+    </div>
   </div>
 
   <div *ngIf="error()" class="error">

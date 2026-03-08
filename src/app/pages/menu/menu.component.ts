@@ -30,6 +30,9 @@ export class MenuComponent implements OnInit {
   restaurantName: string = '';
   tableToken: string | null = null;
   tableNumber: number | null = null;
+  menuMode: 'dinein' | 'delivery' | 'auto' = 'auto';
+  enableDineIn = true;
+  enableDelivery = false;
 
   loading = true;
   error: string | null = null;
@@ -51,6 +54,9 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.restaurantId = this.route.snapshot.queryParamMap.get('restaurantId') ?? '';
     this.tableToken = this.route.snapshot.queryParamMap.get('table');
+    const mode = (this.route.snapshot.queryParamMap.get('mode') ?? '').toLowerCase();
+    if (mode === 'delivery') this.menuMode = 'delivery';
+    else if (mode === 'dinein') this.menuMode = 'dinein';
    
 
     if (!this.restaurantId) {
@@ -63,6 +69,8 @@ export class MenuComponent implements OnInit {
       next: (res) => {
         this.categories = this.buildCategoryVM(res);
         this.restaurantName = res.restaurantName ?? '';
+        this.enableDineIn = res.enableDineIn;
+        this.enableDelivery = res.enableDelivery;
         this.loading = false;
         const currency = res.currency ?? null;
 
@@ -72,17 +80,47 @@ export class MenuComponent implements OnInit {
         next: (t) => {
           this.tableToken = t.token;
           this.tableNumber = t.number;
-          this.cart.initContext(this.restaurantId, this.tableToken, t.number, currency);
+          this.cart.initContext(
+            this.restaurantId,
+            this.tableToken,
+            t.number,
+            currency,
+            res.enableDineIn,
+            res.enableDelivery,
+            res.enableDeliveryCash,
+            res.enableDeliveryCard
+          );
+          this.applyDefaultOrderType();
       },
       error: () => {
         // mesa inválida: guardamos number pero token null (UI puede mostrar warning)
         this.tableToken = null;
-        this.cart.initContext(this.restaurantId, null, this.tableNumber, currency);
+        this.cart.initContext(
+          this.restaurantId,
+          null,
+          this.tableNumber,
+          currency,
+          res.enableDineIn,
+          res.enableDelivery,
+          res.enableDeliveryCash,
+          res.enableDeliveryCard
+        );
+        this.applyDefaultOrderType();
       }
     });
   } else {
     // takeaway o sin mesa
-    this.cart.initContext(this.restaurantId, null, null, currency);
+    this.cart.initContext(
+      this.restaurantId,
+      null,
+      null,
+      currency,
+      res.enableDineIn,
+      res.enableDelivery,
+      res.enableDeliveryCash,
+      res.enableDeliveryCard
+    );
+    this.applyDefaultOrderType();
   }
       },
       error: (err) => {
@@ -160,5 +198,23 @@ export class MenuComponent implements OnInit {
         setTimeout(() => { this.waiterCallError = null; }, 5_000);
       }
     });
+  }
+
+  canCallWaiter(): boolean {
+    return this.enableDineIn && !!this.tableToken && this.menuMode !== 'delivery';
+  }
+
+  private applyDefaultOrderType() {
+    if (this.menuMode === 'delivery' && this.enableDelivery) {
+      this.cart.setOrderType('DELIVERY');
+      return;
+    }
+
+    if (this.tableToken && this.enableDineIn) {
+      this.cart.setOrderType('DINE_IN');
+      return;
+    }
+
+    this.cart.setOrderType('TAKEAWAY');
   }
 }

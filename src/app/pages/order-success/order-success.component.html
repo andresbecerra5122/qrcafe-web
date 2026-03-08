@@ -33,6 +33,13 @@
       <p class="subtitle">Pedido #{{ o.orderNumber }} listo para entregar</p>
     </div>
 
+    <!-- ===== OUT FOR DELIVERY ===== -->
+    <div *ngIf="pageState() === 'out_for_delivery'" class="success-header">
+      <div class="state-icon delivery-route-icon">&#128666;</div>
+      <h1 class="title">En reparto</h1>
+      <p class="subtitle">Tu pedido #{{ o.orderNumber }} va en camino.</p>
+    </div>
+
     <!-- ===== DELIVERED ===== -->
     <div *ngIf="pageState() === 'delivered'" class="success-header">
       <div class="state-icon delivered-icon">&#127869;</div>

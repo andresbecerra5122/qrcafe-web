@@ -7,10 +7,10 @@ const STORAGE_KEY = 'qrcafe_cart_v1';
 function loadState(): CartState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { restaurantId: null, tableToken: null, tableNumber: null, currency: null, orderType: null, items: [] };
+    if (!raw) return { restaurantId: null, tableToken: null, tableNumber: null, currency: null, enableDineIn: true, enableDelivery: false, enableDeliveryCash: true, enableDeliveryCard: true, orderType: null, items: [] };
     return JSON.parse(raw) as CartState;
   } catch {
-    return { restaurantId: null, tableToken: null, tableNumber: null, currency: null, orderType: null, items: [] };
+    return { restaurantId: null, tableToken: null, tableNumber: null, currency: null, enableDineIn: true, enableDelivery: false, enableDeliveryCash: true, enableDeliveryCard: true, orderType: null, items: [] };
   }
 }
 
@@ -32,12 +32,32 @@ export class CartService {
     saveState(next);
   }
 
-  initContext(restaurantId: string, tableToken: string | null, tableNumber: number | null, currency: string | null) {
+  initContext(
+    restaurantId: string,
+    tableToken: string | null,
+    tableNumber: number | null,
+    currency: string | null,
+    enableDineIn = true,
+    enableDelivery = false,
+    enableDeliveryCash = true,
+    enableDeliveryCard = true
+  ) {
     const s = this.state;
 
     // si cambia restaurante, limpiamos carrito (MVP)
     if (s.restaurantId && s.restaurantId !== restaurantId) {
-      this.setState({ restaurantId, tableToken, tableNumber, currency, orderType: null, items: [] });
+      this.setState({
+        restaurantId,
+        tableToken,
+        tableNumber,
+        currency,
+        enableDineIn,
+        enableDelivery,
+        enableDeliveryCash,
+        enableDeliveryCard,
+        orderType: null,
+        items: []
+      });
       return;
     }
 
@@ -46,11 +66,15 @@ export class CartService {
       restaurantId,
       tableToken,
       tableNumber,
-      currency
+      currency,
+      enableDineIn,
+      enableDelivery,
+      enableDeliveryCash,
+      enableDeliveryCard
     });
   }
 
-  setOrderType(orderType: 'DINE_IN' | 'TAKEAWAY') {
+  setOrderType(orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY') {
     this.setState({ ...this.state, orderType });
   }
 

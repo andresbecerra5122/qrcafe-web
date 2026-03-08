@@ -3,6 +3,9 @@ export interface OrderPublicDto {
   orderType: string;
   tableNumber: number | null;
   customerName: string | null;
+  deliveryAddress: string | null;
+  deliveryReference: string | null;
+  deliveryPhone: string | null;
   status: string;
   paymentStatus: string | null;
   paymentMethod: string | null;

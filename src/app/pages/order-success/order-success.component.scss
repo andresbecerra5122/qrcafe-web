@@ -37,6 +37,10 @@
   @apply bg-emerald-500 text-white;
 }
 
+.delivery-route-icon {
+  @apply bg-sky-100 text-sky-700;
+}
+
 .delivered-icon {
   @apply bg-amber-100 text-amber-700;
 }
@@ -94,6 +98,10 @@
 
   &[data-status='READY'] {
     @apply bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200;
+  }
+
+  &[data-status='OUT_FOR_DELIVERY'] {
+    @apply bg-sky-50 text-sky-800 ring-1 ring-sky-200;
   }
 
   &[data-status='DELIVERED'] {
