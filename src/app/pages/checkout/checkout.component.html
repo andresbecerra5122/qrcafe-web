@@ -4,9 +4,17 @@
   <div class="section">
     <h2>Resumen</h2>
 
-    <div *ngFor="let item of cart.items" class="item">
-      <span>{{ item.name }} × {{ item.qty }}</span>
-      <span>{{ item.price * item.qty | currency:currency }}</span>
+    <div *ngFor="let item of cart.items" class="item item--with-notes">
+      <div class="item-main">
+        <span>{{ item.name }} × {{ item.qty }}</span>
+        <span>{{ item.price * item.qty | currency:currency }}</span>
+      </div>
+      <input
+        type="text"
+        class="item-note-input"
+        placeholder="Nota para este producto (ej: sin cebolla, término 3/4)"
+        [value]="item.notes ?? ''"
+        (input)="onItemNotesChange(item.productId, $any($event.target).value)" />
     </div>
 
     <div class="total">

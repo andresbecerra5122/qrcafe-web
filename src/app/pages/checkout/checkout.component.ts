@@ -160,5 +160,9 @@ export class CheckoutComponent {
   selectDeliveryPaymentMethod(method: 'CASH' | 'CARD'): void {
     this.deliveryPaymentMethod.set(method);
   }
+
+  onItemNotesChange(productId: string, value: string): void {
+    this.cartService.setItemNotes(productId, value);
+  }
   
 }

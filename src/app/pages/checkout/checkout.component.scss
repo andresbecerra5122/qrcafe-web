@@ -18,8 +18,21 @@
   @apply flex justify-between text-sm text-slate-700;
 }
 
+.item--with-notes {
+  @apply flex-col items-stretch gap-2;
+}
+
+.item-main {
+  @apply flex justify-between text-sm text-slate-700;
+}
+
 .item span:last-child {
   @apply font-semibold text-slate-900;
+}
+
+.item-note-input {
+  @apply w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none
+  focus:ring-2 focus:ring-slate-300 focus:border-slate-300;
 }
 
 .total {

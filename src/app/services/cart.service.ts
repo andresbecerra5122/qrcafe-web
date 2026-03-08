@@ -112,6 +112,16 @@ export class CartService {
     this.setState({ ...s, items: nextItems });
   }
 
+  setItemNotes(productId: string, notes: string | null) {
+    const s = this.state;
+    const it = s.items.find(x => x.productId === productId);
+    if (!it) return;
+
+    const normalized = notes?.trim();
+    it.notes = normalized ? normalized : null;
+    this.setState({ ...s, items: [...s.items] });
+  }
+
   clear() {
     const s = this.state;
     this.setState({ ...s, items: [] });
