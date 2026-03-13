@@ -110,15 +110,18 @@
       </section>
     </ng-container>
   </main>
-  <div class="cart-bar" *ngIf="cart.getCount() > 0">
+  <div class="cart-bar" *ngIf="cart.getCount() > 0 || hasOpenTableOrder()">
     <div class="cart-bar__inner">
       <div class="cart-bar__left">
+        <div *ngIf="hasOpenTableOrder()" class="cart-bar__open-order">
+          Pedido abierto #{{ cart.state.activeOrder?.orderNumber }} · {{ formatMoney(cart.state.activeOrder?.total ?? 0) }}
+        </div>
         <div class="cart-bar__count">{{ cart.getCount() }} item(s)</div>
         <div class="cart-bar__total">{{ formatMoney(cart.getSubtotal()) }}</div>
       </div>
 
       <a class="btn btn--primary" [routerLink]="['/checkout']">
-        Ir a checkout
+        Ver carrito
       </a>
     </div>
   </div>

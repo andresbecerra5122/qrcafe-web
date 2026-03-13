@@ -7,6 +7,21 @@ export interface CartItem {
   notes?: string | null;
 }
 
+export interface ActiveOrderSummary {
+  orderId: string;
+  orderNumber: number;
+  status: string;
+  total: number;
+  currency: string;
+}
+
+export interface LastPaidOrderSummary {
+  orderId: string;
+  orderNumber: number;
+  total: number;
+  currency: string;
+}
+
 export interface CartState {
   restaurantId: string | null;
   tableToken: string | null;
@@ -18,4 +33,6 @@ export interface CartState {
   enableDeliveryCard: boolean;
   orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY' | null;
   items: CartItem[];
+  activeOrder: ActiveOrderSummary | null;
+  lastPaidOrder: LastPaidOrderSummary | null;
 }

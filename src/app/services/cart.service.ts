@@ -1,16 +1,57 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { CartItem, CartState } from '../models/cart/cart.models';
+import { ActiveOrderSummary, CartItem, CartState, LastPaidOrderSummary } from '../models/cart/cart.models';
 
 const STORAGE_KEY = 'qrcafe_cart_v1';
 
 function loadState(): CartState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { restaurantId: null, tableToken: null, tableNumber: null, currency: null, enableDineIn: true, enableDelivery: false, enableDeliveryCash: true, enableDeliveryCard: true, orderType: null, items: [] };
-    return JSON.parse(raw) as CartState;
+    if (!raw) return {
+      restaurantId: null,
+      tableToken: null,
+      tableNumber: null,
+      currency: null,
+      enableDineIn: true,
+      enableDelivery: false,
+      enableDeliveryCash: true,
+      enableDeliveryCard: true,
+      orderType: null,
+      items: [],
+      activeOrder: null,
+      lastPaidOrder: null
+    };
+
+    const parsed = JSON.parse(raw) as Partial<CartState>;
+    return {
+      restaurantId: parsed.restaurantId ?? null,
+      tableToken: parsed.tableToken ?? null,
+      tableNumber: parsed.tableNumber ?? null,
+      currency: parsed.currency ?? null,
+      enableDineIn: parsed.enableDineIn ?? true,
+      enableDelivery: parsed.enableDelivery ?? false,
+      enableDeliveryCash: parsed.enableDeliveryCash ?? true,
+      enableDeliveryCard: parsed.enableDeliveryCard ?? true,
+      orderType: parsed.orderType ?? null,
+      items: parsed.items ?? [],
+      activeOrder: parsed.activeOrder ?? null,
+      lastPaidOrder: parsed.lastPaidOrder ?? null
+    };
   } catch {
-    return { restaurantId: null, tableToken: null, tableNumber: null, currency: null, enableDineIn: true, enableDelivery: false, enableDeliveryCash: true, enableDeliveryCard: true, orderType: null, items: [] };
+    return {
+      restaurantId: null,
+      tableToken: null,
+      tableNumber: null,
+      currency: null,
+      enableDineIn: true,
+      enableDelivery: false,
+      enableDeliveryCash: true,
+      enableDeliveryCard: true,
+      orderType: null,
+      items: [],
+      activeOrder: null,
+      lastPaidOrder: null
+    };
   }
 }
 
@@ -56,7 +97,9 @@ export class CartService {
         enableDeliveryCash,
         enableDeliveryCard,
         orderType: null,
-        items: []
+        items: [],
+        activeOrder: null,
+        lastPaidOrder: null
       });
       return;
     }
@@ -125,6 +168,22 @@ export class CartService {
   clear() {
     const s = this.state;
     this.setState({ ...s, items: [] });
+  }
+
+  setActiveOrder(activeOrder: ActiveOrderSummary) {
+    this.setState({ ...this.state, activeOrder });
+  }
+
+  clearActiveOrder() {
+    this.setState({ ...this.state, activeOrder: null });
+  }
+
+  setLastPaidOrder(lastPaidOrder: LastPaidOrderSummary) {
+    this.setState({ ...this.state, lastPaidOrder });
+  }
+
+  clearLastPaidOrder() {
+    this.setState({ ...this.state, lastPaidOrder: null });
   }
 
   getCount(): number {

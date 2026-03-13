@@ -1,8 +1,79 @@
 <div class="checkout">
-  <h1 class="title">Checkout</h1>
+  <h1 class="title">Carrito</h1>
+
+  <div class="section section-actions">
+    <button type="button" class="btn btn--secondary" (click)="goToMenu()">
+      Volver al menú
+    </button>
+  </div>
+
+  <div class="section" *ngIf="activeOrderLoading()">
+    Cargando pedido actual...
+  </div>
+
+  <div class="section" *ngIf="activeOrderError()">
+    <div class="error">{{ activeOrderError() }}</div>
+  </div>
+
+  <div class="section" *ngIf="hasLastPaidOrder()">
+    <h2>Ultima cuenta pagada</h2>
+    <div class="status-line">
+      Pedido #{{ cart.lastPaidOrder?.orderNumber }} - {{ cart.lastPaidOrder?.total | currency:(cart.lastPaidOrder?.currency ?? currency) }}
+    </div>
+    <button type="button" class="btn btn--secondary" (click)="viewLastPaidInvoice()">
+      Ver factura
+    </button>
+  </div>
+
+  <div class="section" *ngIf="activeOrder() as currentOrder">
+    <h2>Pedido actual de la mesa #{{ currentOrder.orderNumber }}</h2>
+
+    <div class="status-line">
+      Estado: <strong>{{ getStatusLabel(currentOrder.status) }}</strong>
+    </div>
+
+    <div class="items-group" *ngIf="pendingItems().length > 0">
+      <div class="items-group__title">Pendiente por preparar/entregar</div>
+      <div *ngFor="let item of pendingItems()" class="item item--pending">
+        <span>{{ item.productName }} × {{ item.qty }}</span>
+        <span>{{ item.lineTotal | currency:currentOrder.currency }}</span>
+      </div>
+    </div>
+
+    <div class="items-group" *ngIf="completedItems().length > 0">
+      <div class="items-group__title">Ya preparado/entregado</div>
+      <div *ngFor="let item of completedItems()" class="item item--done">
+        <span>{{ item.productName }} × {{ item.qty }}</span>
+        <span>{{ item.lineTotal | currency:currentOrder.currency }}</span>
+      </div>
+    </div>
+
+    <div class="total">
+      <span class="total-label">Total acumulado</span>
+      <span class="total-amount">{{ currentOrder.total | currency:currentOrder.currency }}</span>
+    </div>
+
+    <div class="payment-box" *ngIf="canRequestPayment()">
+      <p>¿Todo listo? Puedes solicitar el cobro desde aquí.</p>
+      <div class="payment-actions">
+        <button type="button" class="btn btn--cash" [disabled]="requestingPayment()" (click)="requestPayment('CASH')">
+          {{ requestingPayment() ? 'Solicitando...' : 'Pagar en efectivo' }}
+        </button>
+        <button type="button" class="btn btn--card" [disabled]="requestingPayment()" (click)="requestPayment('CARD')">
+          {{ requestingPayment() ? 'Solicitando...' : 'Pagar con tarjeta' }}
+        </button>
+      </div>
+      <div class="hint" *ngIf="isPaymentPending()">La cuenta ya fue solicitada al mesero.</div>
+      <div class="error" *ngIf="paymentError()">{{ paymentError() }}</div>
+    </div>
+  </div>
 
   <div class="section">
-    <h2>Resumen</h2>
+    <h2>Nuevos productos por agregar</h2>
+
+    <div *ngIf="cart.items.length === 0" class="hint">
+      No hay productos nuevos en el carrito. Puedes volver al menú y seguir pidiendo.
+    </div>
 
     <div *ngFor="let item of cart.items" class="item item--with-notes">
       <div class="item-main">
@@ -18,8 +89,8 @@
     </div>
 
     <div class="total">
-        <span class="total-label">Total</span>
-        <span class="total-amount">{{ subtotal() | currency:currency }}</span>
+      <span class="total-label">Total nuevos productos</span>
+      <span class="total-amount">{{ subtotal() | currency:currency }}</span>
     </div>
   </div>
 
@@ -61,7 +132,7 @@
         </button>
 
         <button
-        *ngIf="canDelivery()"
+        *ngIf="showDeliveryOption()"
         type="button"
         class="order-type-card"
         [class.active]="orderType() === 'DELIVERY'"
@@ -149,8 +220,8 @@
 
   <button
     class="btn"
-    [disabled]="loading()"
+    [disabled]="loading() || cart.items.length === 0"
     (click)="submit()">
-    {{ loading() ? 'Creando orden...' : 'Confirmar orden' }}
+    {{ loading() ? 'Enviando...' : (hasActiveOrder() ? 'Agregar al pedido actual' : 'Confirmar orden') }}
   </button>
 </div>

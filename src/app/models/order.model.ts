@@ -24,4 +24,5 @@ export interface OrderItemPublicDto {
   qty: number;
   unitPrice: number;
   lineTotal: number;
+  isDone: boolean;
 }

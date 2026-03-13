@@ -180,6 +180,10 @@ export class MenuComponent implements OnInit {
     return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
   }
 
+  hasOpenTableOrder(): boolean {
+    return !!this.cart.state.activeOrder?.orderId;
+  }
+
   callWaiter() {
     if (this.waiterCalling || this.waiterCalled) return;
 

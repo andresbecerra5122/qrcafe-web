@@ -102,6 +102,28 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
         this.loading.set(false);
         this.error.set(null);
 
+        if (o.orderType === 'DINE_IN') {
+          this.cartService.setActiveOrder({
+            orderId: o.orderId,
+            orderNumber: o.orderNumber,
+            status: o.status,
+            total: o.total,
+            currency: o.currency
+          });
+        }
+
+        if (o.status === 'PAID') {
+          this.cartService.setLastPaidOrder({
+            orderId: o.orderId,
+            orderNumber: o.orderNumber,
+            total: o.total,
+            currency: o.currency
+          });
+          this.cartService.clearActiveOrder();
+        } else if (o.status === 'CANCELLED') {
+          this.cartService.clearActiveOrder();
+        }
+
         if (['PAID', 'CANCELLED'].includes(o.status)) {
           this.stopPolling();
         }
@@ -116,7 +138,7 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
   }
 
   orderAgain() {
-    window.open(this.menuUrl, '_blank');
+    window.location.href = this.menuUrl;
   }
 
   viewInvoice() {

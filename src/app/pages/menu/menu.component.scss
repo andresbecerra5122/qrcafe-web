@@ -197,6 +197,10 @@
   @apply text-xs font-semibold text-stone-500;
 }
 
+.cart-bar__open-order {
+  @apply text-xs font-bold text-emerald-700;
+}
+
 .cart-bar__total {
   @apply text-base font-extrabold text-stone-900;
 }
