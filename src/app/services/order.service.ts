@@ -18,6 +18,12 @@ export class OrderService {
     return this.http.get<OrderPublicDto>(`${this.baseUrl}/public/orders/${orderId}`);
   }
 
+  getActiveOrderByTable(restaurantId: string, tableToken: string): Observable<OrderPublicDto> {
+    return this.http.get<OrderPublicDto>(
+      `${this.baseUrl}/public/orders/active-by-table?restaurantId=${restaurantId}&tableToken=${encodeURIComponent(tableToken)}`
+    );
+  }
+
   requestPayment(orderId: string, paymentMethod: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/public/orders/${orderId}/request-payment`, { paymentMethod });
   }

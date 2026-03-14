@@ -5,6 +5,7 @@ import { MenuService } from '../../services/menu.service';
 import { MenuProduct, MenuResponse } from '../../models/menu/menu.models';
 import { CartService } from '../../services/cart.service';
 import { WaiterCallService } from '../../services/waiter-call.service';
+import { OrderService } from '../../services/order.service';
 import { RouterModule } from '@angular/router';
 
 
@@ -48,7 +49,8 @@ export class MenuComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private menuService: MenuService,
     public cart: CartService,
-    private waiterCallService: WaiterCallService
+    private waiterCallService: WaiterCallService,
+    private orderService: OrderService
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +92,7 @@ export class MenuComponent implements OnInit {
             res.enableDeliveryCash,
             res.enableDeliveryCard
           );
+          this.loadActiveTableOrder();
           this.applyDefaultOrderType();
       },
       error: () => {
@@ -105,6 +108,7 @@ export class MenuComponent implements OnInit {
           res.enableDeliveryCash,
           res.enableDeliveryCard
         );
+        this.cart.clearActiveOrder();
         this.applyDefaultOrderType();
       }
     });
@@ -120,6 +124,7 @@ export class MenuComponent implements OnInit {
       res.enableDeliveryCash,
       res.enableDeliveryCard
     );
+    this.cart.clearActiveOrder();
     this.applyDefaultOrderType();
   }
       },
@@ -220,5 +225,32 @@ export class MenuComponent implements OnInit {
     }
 
     this.cart.setOrderType('TAKEAWAY');
+  }
+
+  private loadActiveTableOrder() {
+    if (!this.tableToken) {
+      this.cart.clearActiveOrder();
+      return;
+    }
+
+    this.orderService.getActiveOrderByTable(this.restaurantId, this.tableToken).subscribe({
+      next: (order) => {
+        if (order.status === 'PAID' || order.status === 'CANCELLED') {
+          this.cart.clearActiveOrder();
+          return;
+        }
+
+        this.cart.setActiveOrder({
+          orderId: order.orderId,
+          orderNumber: order.orderNumber,
+          status: order.status,
+          total: order.total,
+          currency: order.currency
+        });
+      },
+      error: () => {
+        this.cart.clearActiveOrder();
+      }
+    });
   }
 }
