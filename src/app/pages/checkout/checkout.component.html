@@ -32,19 +32,20 @@
       Estado: <strong>{{ getStatusLabel(currentOrder.status) }}</strong>
     </div>
 
-    <div class="items-group" *ngIf="pendingItems().length > 0">
-      <div class="items-group__title">Pendiente por preparar/entregar</div>
-      <div *ngFor="let item of pendingItems()" class="item item--pending">
-        <span>{{ item.productName }} × {{ item.qty }}</span>
-        <span>{{ item.lineTotal | currency:currentOrder.currency }}</span>
+    <div class="items-group" *ngIf="totalOrderItemCount() > 0">
+      <div class="items-group__title">
+        Progreso de entrega: {{ deliveredItemCount() }}/{{ totalOrderItemCount() }} items ({{ deliveryProgressPercent() }}%)
       </div>
     </div>
 
-    <div class="items-group" *ngIf="completedItems().length > 0">
-      <div class="items-group__title">Ya preparado/entregado</div>
-      <div *ngFor="let item of completedItems()" class="item item--done">
+    <div class="items-group" *ngIf="allOrderItems().length > 0">
+      <div class="items-group__title">Items del pedido</div>
+      <div *ngFor="let item of allOrderItems()" class="item" [class.item--done]="item.isDelivered" [class.item--pending]="!item.isDelivered">
         <span>{{ item.productName }} × {{ item.qty }}</span>
-        <span>{{ item.lineTotal | currency:currentOrder.currency }}</span>
+        <span>
+          {{ item.lineTotal | currency:currentOrder.currency }}
+          · {{ item.isDelivered ? 'Entregado' : 'Pendiente de entrega' }}
+        </span>
       </div>
     </div>
 

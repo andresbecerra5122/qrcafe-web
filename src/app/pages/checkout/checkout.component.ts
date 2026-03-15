@@ -222,12 +222,22 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     return this.canDelivery() && !this.isTableContext();
   }
 
-  pendingItems() {
-    return (this.activeOrder()?.items ?? []).filter(i => !i.isDone);
+  allOrderItems() {
+    return this.activeOrder()?.items ?? [];
   }
 
-  completedItems() {
-    return (this.activeOrder()?.items ?? []).filter(i => i.isDone);
+  deliveredItemCount(): number {
+    return this.allOrderItems().filter(i => i.isDelivered).length;
+  }
+
+  totalOrderItemCount(): number {
+    return this.allOrderItems().length;
+  }
+
+  deliveryProgressPercent(): number {
+    const total = this.totalOrderItemCount();
+    if (total === 0) return 0;
+    return Math.round((this.deliveredItemCount() / total) * 100);
   }
 
   viewLastPaidInvoice(): void {
