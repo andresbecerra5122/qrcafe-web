@@ -21,6 +21,7 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
   error = signal<string | null>(null);
   requestingPayment = signal(false);
   requestError = signal<string | null>(null);
+  cashierModalVisible = signal(false);
 
   currency = computed(() => this.order()?.currency ?? 'COP');
   statusLabel = computed(() => this.getStatusLabel(this.order()?.status ?? ''));
@@ -149,6 +150,9 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
 
   requestWaiter(method: 'CASH' | 'CARD') {
     if (!this.orderId) return;
+    if (this.isPayAtCashierEnabled()) {
+      this.cashierModalVisible.set(true);
+    }
 
     this.requestingPayment.set(true);
     this.requestError.set(null);
@@ -163,6 +167,14 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
         this.requestError.set(err?.error?.message ?? 'No se pudo solicitar el mesero');
       }
     });
+  }
+
+  isPayAtCashierEnabled(): boolean {
+    return this.order()?.orderType === 'DINE_IN' && this.cartService.state.enablePayAtCashier;
+  }
+
+  closeCashierModal(): void {
+    this.cashierModalVisible.set(false);
   }
 
   private stopPolling() {

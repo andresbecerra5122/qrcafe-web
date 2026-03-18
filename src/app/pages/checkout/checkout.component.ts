@@ -29,6 +29,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   requestingPayment = signal(false);
   paymentError = signal<string | null>(null);
   activeOrder = signal<OrderPublicDto | null>(null);
+  cashierModalVisible = signal(false);
 
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private deliveryPhoneAlertShown = false;
@@ -176,6 +177,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   requestPayment(method: 'CASH' | 'CARD') {
     const order = this.activeOrder();
     if (!order?.orderId) return;
+    if (this.isPayAtCashierEnabled()) {
+      this.cashierModalVisible.set(true);
+    }
     this.requestingPayment.set(true);
     this.paymentError.set(null);
 
@@ -209,6 +213,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   isPaymentPending(): boolean {
     return this.activeOrder()?.status === 'PAYMENT_PENDING';
+  }
+
+  isPayAtCashierEnabled(): boolean {
+    return this.orderType() === 'DINE_IN' && this.cart.enablePayAtCashier;
   }
 
   hasLastPaidOrder(): boolean {
@@ -285,6 +293,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     if (!value.trim()) return;
     this.deliveryPhoneAlertShown = true;
     window.alert('Sera contactado por el restaurante via WhatsApp para completar el pago y obtener el valor del domicilio.');
+  }
+
+  closeCashierModal(): void {
+    this.cashierModalVisible.set(false);
   }
 
   formatMoney(value: number): string {

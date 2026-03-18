@@ -90,7 +90,8 @@ export class MenuComponent implements OnInit {
             res.enableDineIn,
             res.enableDelivery,
             res.enableDeliveryCash,
-            res.enableDeliveryCard
+            res.enableDeliveryCard,
+            res.enablePayAtCashier
           );
           this.loadActiveTableOrder();
           this.applyDefaultOrderType();
@@ -106,7 +107,8 @@ export class MenuComponent implements OnInit {
           res.enableDineIn,
           res.enableDelivery,
           res.enableDeliveryCash,
-          res.enableDeliveryCard
+          res.enableDeliveryCard,
+          res.enablePayAtCashier
         );
         this.cart.clearActiveOrder();
         this.applyDefaultOrderType();
@@ -122,7 +124,8 @@ export class MenuComponent implements OnInit {
       res.enableDineIn,
       res.enableDelivery,
       res.enableDeliveryCash,
-      res.enableDeliveryCard
+      res.enableDeliveryCard,
+      res.enablePayAtCashier
     );
     this.cart.clearActiveOrder();
     this.applyDefaultOrderType();

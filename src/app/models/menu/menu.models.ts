@@ -6,6 +6,7 @@ export interface MenuResponse {
   enableDelivery: boolean;
   enableDeliveryCash: boolean;
   enableDeliveryCard: boolean;
+  enablePayAtCashier: boolean;
   categories: MenuCategory[];
   products: MenuProduct[];
 }

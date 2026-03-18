@@ -16,6 +16,7 @@ function loadState(): CartState {
       enableDelivery: false,
       enableDeliveryCash: true,
       enableDeliveryCard: true,
+      enablePayAtCashier: false,
       orderType: null,
       items: [],
       activeOrder: null,
@@ -32,6 +33,7 @@ function loadState(): CartState {
       enableDelivery: parsed.enableDelivery ?? false,
       enableDeliveryCash: parsed.enableDeliveryCash ?? true,
       enableDeliveryCard: parsed.enableDeliveryCard ?? true,
+      enablePayAtCashier: parsed.enablePayAtCashier ?? false,
       orderType: parsed.orderType ?? null,
       items: parsed.items ?? [],
       activeOrder: parsed.activeOrder ?? null,
@@ -47,6 +49,7 @@ function loadState(): CartState {
       enableDelivery: false,
       enableDeliveryCash: true,
       enableDeliveryCard: true,
+      enablePayAtCashier: false,
       orderType: null,
       items: [],
       activeOrder: null,
@@ -81,7 +84,8 @@ export class CartService {
     enableDineIn = true,
     enableDelivery = false,
     enableDeliveryCash = true,
-    enableDeliveryCard = true
+    enableDeliveryCard = true,
+    enablePayAtCashier = false
   ) {
     const s = this.state;
 
@@ -96,6 +100,7 @@ export class CartService {
         enableDelivery,
         enableDeliveryCash,
         enableDeliveryCard,
+        enablePayAtCashier,
         orderType: null,
         items: [],
         activeOrder: null,
@@ -113,7 +118,8 @@ export class CartService {
       enableDineIn,
       enableDelivery,
       enableDeliveryCash,
-      enableDeliveryCard
+      enableDeliveryCard,
+      enablePayAtCashier
     });
   }
 

@@ -155,6 +155,38 @@
   @apply grid grid-cols-2 gap-3;
 }
 
+.cashier-notice {
+  @apply rounded-xl border border-amber-300 bg-amber-50 p-3;
+}
+
+.cashier-notice__title {
+  @apply text-sm font-bold text-amber-800;
+}
+
+.cashier-notice__text {
+  @apply text-sm text-amber-700 mt-1;
+}
+
+.modal-overlay {
+  @apply fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50;
+}
+
+.modal-card {
+  @apply w-full max-w-md bg-white rounded-2xl p-5 shadow-xl border border-orange-100/80 space-y-3;
+}
+
+.modal-title {
+  @apply text-lg font-extrabold text-stone-900;
+}
+
+.modal-text {
+  @apply text-sm text-stone-600;
+}
+
+.modal-btn {
+  @apply mt-2;
+}
+
 .btn-cash {
   @apply rounded-2xl bg-emerald-600 text-white py-3 font-extrabold text-center
     hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed

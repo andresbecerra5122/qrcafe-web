@@ -1,4 +1,11 @@
 <div class="order-success">
+  <div *ngIf="cashierModalVisible()" class="modal-overlay" (click)="closeCashierModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">Pago en caja</h3>
+      <p class="modal-text">Aproximese a la caja para completar el pago de su pedido.</p>
+      <button class="btn modal-btn" (click)="closeCashierModal()">Entendido</button>
+    </div>
+  </div>
 
   <!-- Loading -->
   <div *ngIf="pageState() === 'loading'" class="loading">
@@ -50,8 +57,12 @@
     <!-- ===== PAYMENT PENDING (waiter requested) ===== -->
     <div *ngIf="pageState() === 'payment_pending'" class="success-header">
       <div class="state-icon pending-icon">&#9203;</div>
-      <h1 class="title">Mesero en camino</h1>
-      <p class="subtitle">Un mesero se acercará a tu mesa para cobrar</p>
+      <h1 class="title">{{ isPayAtCashierEnabled() ? 'Acercate a caja' : 'Mesero en camino' }}</h1>
+      <p class="subtitle">
+        {{ isPayAtCashierEnabled()
+          ? 'Acercate a la caja para completar el pago de tu pedido.'
+          : 'Un mesero se acercara a tu mesa para cobrar' }}
+      </p>
     </div>
 
     <!-- ===== PAID ===== -->
@@ -109,7 +120,15 @@
     <!-- ===== REQUEST WAITER (shown when DELIVERED) ===== -->
     <div *ngIf="pageState() === 'delivered'" class="alert-card alert-info">
       <p class="alert-title">Pedir la cuenta</p>
-      <p class="alert-body">Elige cómo deseas pagar y un mesero irá a tu mesa.</p>
+      <p class="alert-body">
+        {{ isPayAtCashierEnabled()
+          ? 'Elige como deseas pagar. Luego aparecera un aviso para acercarte a caja.'
+          : 'Elige como deseas pagar y un mesero ira a tu mesa.' }}
+      </p>
+      <div *ngIf="isPayAtCashierEnabled()" class="cashier-notice">
+        <p class="cashier-notice__title">Importante: Pago en caja</p>
+        <p class="cashier-notice__text">Despues de elegir metodo de pago, aproximese a la caja para completar el pago.</p>
+      </div>
       <div class="payment-buttons">
         <button class="btn-cash" [disabled]="requestingPayment()" (click)="requestWaiter('CASH')">
           {{ requestingPayment() ? 'Solicitando...' : '&#128181; Efectivo' }}
@@ -128,6 +147,10 @@
         Método de pago:
         <strong>{{ o.paymentMethod === 'CASH' ? 'Efectivo' : 'Tarjeta' }}</strong>
       </p>
+      <div *ngIf="isPayAtCashierEnabled()" class="cashier-notice">
+        <p class="cashier-notice__title">Aproximese a la caja</p>
+        <p class="cashier-notice__text">Su metodo fue registrado. Dirijase a caja para finalizar el pago.</p>
+      </div>
     </div>
 
     <!-- ===== ORDER DETAILS ===== -->

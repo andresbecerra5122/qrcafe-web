@@ -1,4 +1,12 @@
 <div class="checkout">
+  <div *ngIf="cashierModalVisible()" class="modal-overlay" (click)="closeCashierModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">Pago en caja</h3>
+      <p class="modal-text">Aproximese a la caja para completar el pago de su pedido.</p>
+      <button type="button" class="btn modal-btn" (click)="closeCashierModal()">Entendido</button>
+    </div>
+  </div>
+
   <h1 class="title">Carrito</h1>
 
   <div class="section section-actions">
@@ -55,7 +63,14 @@
     </div>
 
     <div class="payment-box" *ngIf="canRequestPayment()">
-      <p>¿Todo listo? Puedes solicitar el cobro desde aquí.</p>
+      <p>
+        {{ isPayAtCashierEnabled()
+          ? '¿Todo listo? Selecciona metodo de pago y te indicaremos acercarte a caja.'
+          : '¿Todo listo? Puedes solicitar el cobro desde aqui.' }}
+      </p>
+      <div *ngIf="isPayAtCashierEnabled()" class="cashier-notice">
+        <strong>Pago en caja:</strong> al elegir metodo de pago, acercate a la caja para finalizar.
+      </div>
       <div class="payment-actions">
         <button type="button" class="btn btn--cash" [disabled]="requestingPayment()" (click)="requestPayment('CASH')">
           {{ requestingPayment() ? 'Solicitando...' : 'Pagar en efectivo' }}
@@ -64,7 +79,11 @@
           {{ requestingPayment() ? 'Solicitando...' : 'Pagar con tarjeta' }}
         </button>
       </div>
-      <div class="hint" *ngIf="isPaymentPending()">La cuenta ya fue solicitada al mesero.</div>
+      <div class="hint" *ngIf="isPaymentPending()">
+        {{ isPayAtCashierEnabled()
+          ? 'Aproximese a la caja para completar el pago.'
+          : 'La cuenta ya fue solicitada al mesero.' }}
+      </div>
       <div class="error" *ngIf="paymentError()">{{ paymentError() }}</div>
     </div>
   </div>
