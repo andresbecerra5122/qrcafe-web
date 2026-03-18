@@ -181,7 +181,11 @@
     <input
       type="text"
       placeholder="Teléfono de contacto"
-      (input)="deliveryPhone.set($any($event.target).value)" />
+      (input)="deliveryPhone.set($any($event.target).value)"
+      (blur)="onDeliveryPhoneBlur($any($event.target).value)" />
+    <div class="hint">
+      Te contactaremos por WhatsApp para confirmar pago y valor del domicilio.
+    </div>
 
     <div class="section-title">Forma de pago</div>
     <div class="order-type-grid">

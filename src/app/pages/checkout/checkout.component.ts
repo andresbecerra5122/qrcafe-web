@@ -31,6 +31,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   activeOrder = signal<OrderPublicDto | null>(null);
 
   private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private deliveryPhoneAlertShown = false;
 
   get cart() {
     return this.cartService.state;
@@ -276,6 +277,14 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   onItemNotesChange(productId: string, value: string): void {
     this.cartService.setItemNotes(productId, value);
+  }
+
+  onDeliveryPhoneBlur(value: string): void {
+    this.deliveryPhone.set(value);
+    if (this.deliveryPhoneAlertShown) return;
+    if (!value.trim()) return;
+    this.deliveryPhoneAlertShown = true;
+    window.alert('Sera contactado por el restaurante via WhatsApp para completar el pago y obtener el valor del domicilio.');
   }
 
   formatMoney(value: number): string {
