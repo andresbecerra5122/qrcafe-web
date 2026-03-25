@@ -148,7 +148,7 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
     }
   }
 
-  requestWaiter(method: 'CASH' | 'CARD') {
+  requestWaiter(method: string) {
     if (!this.orderId) return;
     if (this.isPayAtCashierEnabled()) {
       this.cashierModalVisible.set(true);
@@ -175,6 +175,19 @@ export class OrderSuccessComponent implements OnInit, OnDestroy {
 
   closeCashierModal(): void {
     this.cashierModalVisible.set(false);
+  }
+
+  availablePaymentMethods(): { code: string; label: string }[] {
+    const methods = this.cartService.state.paymentMethods ?? [];
+    if (methods.length === 0) {
+      return [
+        { code: 'CASH', label: 'Efectivo' },
+        { code: 'CARD', label: 'Tarjeta' }
+      ];
+    }
+    return [...methods]
+      .sort((a, b) => a.sort - b.sort)
+      .map(m => ({ code: m.code, label: m.label }));
   }
 
   private stopPolling() {

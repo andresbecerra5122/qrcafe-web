@@ -72,11 +72,13 @@
         <strong>Pago en caja:</strong> al elegir metodo de pago, acercate a la caja para finalizar.
       </div>
       <div class="payment-actions">
-        <button type="button" class="btn btn--cash" [disabled]="requestingPayment()" (click)="requestPayment('CASH')">
-          {{ requestingPayment() ? 'Solicitando...' : 'Pagar en efectivo' }}
-        </button>
-        <button type="button" class="btn btn--card" [disabled]="requestingPayment()" (click)="requestPayment('CARD')">
-          {{ requestingPayment() ? 'Solicitando...' : 'Pagar con tarjeta' }}
+        <button
+          *ngFor="let method of availablePaymentMethods()"
+          type="button"
+          class="btn btn--cash"
+          [disabled]="requestingPayment()"
+          (click)="requestPayment(method.code)">
+          {{ requestingPayment() ? 'Solicitando...' : ('Pagar con ' + method.label) }}
         </button>
       </div>
       <div class="hint" *ngIf="isPaymentPending()">

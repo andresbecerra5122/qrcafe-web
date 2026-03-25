@@ -130,11 +130,12 @@
         <p class="cashier-notice__text">Despues de elegir metodo de pago, aproximese a la caja para completar el pago.</p>
       </div>
       <div class="payment-buttons">
-        <button class="btn-cash" [disabled]="requestingPayment()" (click)="requestWaiter('CASH')">
-          {{ requestingPayment() ? 'Solicitando...' : '&#128181; Efectivo' }}
-        </button>
-        <button class="btn-card" [disabled]="requestingPayment()" (click)="requestWaiter('CARD')">
-          {{ requestingPayment() ? 'Solicitando...' : '&#128179; Tarjeta' }}
+        <button
+          *ngFor="let method of availablePaymentMethods()"
+          class="btn-cash"
+          [disabled]="requestingPayment()"
+          (click)="requestWaiter(method.code)">
+          {{ requestingPayment() ? 'Solicitando...' : method.label }}
         </button>
       </div>
       <p *ngIf="requestError()" class="error-text mt-2">{{ requestError() }}</p>
@@ -145,7 +146,7 @@
       <p class="alert-title">Cuenta solicitada</p>
       <p class="alert-body">
         Método de pago:
-        <strong>{{ o.paymentMethod === 'CASH' ? 'Efectivo' : 'Tarjeta' }}</strong>
+        <strong>{{ o.paymentMethod ?? 'N/A' }}</strong>
       </p>
       <div *ngIf="isPayAtCashierEnabled()" class="cashier-notice">
         <p class="cashier-notice__title">Aproximese a la caja</p>

@@ -7,8 +7,16 @@ export interface MenuResponse {
   enableDeliveryCash: boolean;
   enableDeliveryCard: boolean;
   enablePayAtCashier: boolean;
+  paymentMethods: PaymentMethodOption[];
   categories: MenuCategory[];
   products: MenuProduct[];
+}
+
+export interface PaymentMethodOption {
+  id: string;
+  code: string;
+  label: string;
+  sort: number;
 }
 
 export interface MenuCategory {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ActiveOrderSummary, CartItem, CartState, LastPaidOrderSummary } from '../models/cart/cart.models';
+import { ActiveOrderSummary, CartItem, CartState, LastPaidOrderSummary, PaymentMethodOption } from '../models/cart/cart.models';
 
 const STORAGE_KEY = 'qrcafe_cart_v1';
 
@@ -17,6 +17,7 @@ function loadState(): CartState {
       enableDeliveryCash: true,
       enableDeliveryCard: true,
       enablePayAtCashier: false,
+      paymentMethods: [],
       orderType: null,
       items: [],
       activeOrder: null,
@@ -34,6 +35,7 @@ function loadState(): CartState {
       enableDeliveryCash: parsed.enableDeliveryCash ?? true,
       enableDeliveryCard: parsed.enableDeliveryCard ?? true,
       enablePayAtCashier: parsed.enablePayAtCashier ?? false,
+      paymentMethods: parsed.paymentMethods ?? [],
       orderType: parsed.orderType ?? null,
       items: parsed.items ?? [],
       activeOrder: parsed.activeOrder ?? null,
@@ -50,6 +52,7 @@ function loadState(): CartState {
       enableDeliveryCash: true,
       enableDeliveryCard: true,
       enablePayAtCashier: false,
+      paymentMethods: [],
       orderType: null,
       items: [],
       activeOrder: null,
@@ -85,7 +88,8 @@ export class CartService {
     enableDelivery = false,
     enableDeliveryCash = true,
     enableDeliveryCard = true,
-    enablePayAtCashier = false
+    enablePayAtCashier = false,
+    paymentMethods: PaymentMethodOption[] = []
   ) {
     const s = this.state;
 
@@ -101,6 +105,7 @@ export class CartService {
         enableDeliveryCash,
         enableDeliveryCard,
         enablePayAtCashier,
+        paymentMethods,
         orderType: null,
         items: [],
         activeOrder: null,
@@ -119,7 +124,8 @@ export class CartService {
       enableDelivery,
       enableDeliveryCash,
       enableDeliveryCard,
-      enablePayAtCashier
+      enablePayAtCashier,
+      paymentMethods
     });
   }
 

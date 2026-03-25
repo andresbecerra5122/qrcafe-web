@@ -22,6 +22,13 @@ export interface LastPaidOrderSummary {
   currency: string;
 }
 
+export interface PaymentMethodOption {
+  id: string;
+  code: string;
+  label: string;
+  sort: number;
+}
+
 export interface CartState {
   restaurantId: string | null;
   tableToken: string | null;
@@ -32,6 +39,7 @@ export interface CartState {
   enableDeliveryCash: boolean;
   enableDeliveryCard: boolean;
   enablePayAtCashier: boolean;
+  paymentMethods: PaymentMethodOption[];
   orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY' | null;
   items: CartItem[];
   activeOrder: ActiveOrderSummary | null;
