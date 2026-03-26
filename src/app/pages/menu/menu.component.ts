@@ -92,6 +92,7 @@ export class MenuComponent implements OnInit {
             res.enableDeliveryCash,
             res.enableDeliveryCard,
             res.enablePayAtCashier,
+            res.avgPreparationMinutes,
             res.paymentMethods ?? []
           );
           this.loadActiveTableOrder();
@@ -110,6 +111,7 @@ export class MenuComponent implements OnInit {
           res.enableDeliveryCash,
           res.enableDeliveryCard,
           res.enablePayAtCashier,
+          res.avgPreparationMinutes,
           res.paymentMethods ?? []
         );
         this.cart.clearActiveOrder();
@@ -128,6 +130,7 @@ export class MenuComponent implements OnInit {
       res.enableDeliveryCash,
       res.enableDeliveryCard,
       res.enablePayAtCashier,
+      res.avgPreparationMinutes,
       res.paymentMethods ?? []
     );
     this.cart.clearActiveOrder();
@@ -156,12 +159,14 @@ export class MenuComponent implements OnInit {
       list.sort((a, b) => a.sort - b.sort);
     }
 
-    return categories.map(c => ({
-      id: c.id,
-      name: c.name,
-      sort: c.sort,
-      products: productsByCategory.get(c.id) ?? []
-    }));
+    return categories
+      .map(c => ({
+        id: c.id,
+        name: c.name,
+        sort: c.sort,
+        products: productsByCategory.get(c.id) ?? []
+      }))
+      .filter(c => c.products.length > 0);
   }
 
   formatCOP(value: number): string {

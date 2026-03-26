@@ -284,6 +284,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     return this.cart.enableDeliveryCard;
   }
 
+  hasPrepTimeNotice(): boolean {
+    return (this.cart.avgPreparationMinutes ?? 0) > 0;
+  }
+
+  prepTimeNoticeText(): string {
+    const minutes = this.cart.avgPreparationMinutes ?? 15;
+    return `Tiempo promedio de preparacion cocina es de ${minutes} min`;
+  }
+
   selectOrderType(type: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY'): void {
     this.orderType.set(type);
     this.cartService.setOrderType(type);

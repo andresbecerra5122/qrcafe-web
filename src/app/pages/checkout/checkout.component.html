@@ -15,6 +15,10 @@
     </button>
   </div>
 
+  <div class="prep-time-alert" *ngIf="hasPrepTimeNotice()">
+    {{ prepTimeNoticeText() }}
+  </div>
+
   <div class="section" *ngIf="activeOrderLoading()">
     Cargando pedido actual...
   </div>
