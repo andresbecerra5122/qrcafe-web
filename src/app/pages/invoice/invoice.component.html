@@ -61,6 +61,14 @@
         <span>Impuesto</span>
         <span>{{ o.tax | currency:currency():'symbol-narrow':'1.0-0' }}</span>
       </div>
+      <div class="total-row" *ngIf="o.deliveryFee > 0">
+        <span>Domicilio</span>
+        <span>{{ o.deliveryFee | currency:currency():'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="total-row" *ngIf="o.tipAmount > 0">
+        <span>Propina</span>
+        <span>{{ o.tipAmount | currency:currency():'symbol-narrow':'1.0-0' }}</span>
+      </div>
       <div class="total-row total-final">
         <span>Total</span>
         <span>{{ o.total | currency:currency():'symbol-narrow':'1.0-0' }}</span>

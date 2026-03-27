@@ -1,4 +1,39 @@
 <div class="checkout">
+  <div *ngIf="tipModalVisible()" class="modal-overlay" (click)="closeTipModal()">
+    <div class="modal-card modal-card--tip" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">¿Desea agregar propina?</h3>
+      <p class="modal-text modal-text--muted">
+        Opcional. Se calcula sobre el subtotal de su cuenta (sin impuestos ni domicilio).
+      </p>
+      <div class="tip-modal-actions">
+        <button type="button" class="btn-tip btn-tip--ghost" (click)="chooseTipNone()">No, gracias</button>
+        <button type="button" class="btn-tip btn-tip--primary" (click)="chooseTipSuggested()">
+          Sí, sugerida ({{ cart.suggestedTipPercent }}%)
+        </button>
+      </div>
+      <button type="button" class="btn-tip btn-tip--outline w-full" (click)="toggleTipManual()">
+        {{ tipManualOpen() ? 'Ocultar importe manual' : 'Importe manual' }}
+      </button>
+      <div class="tip-manual" *ngIf="tipManualOpen()">
+        <label class="tip-manual__label" for="tipManualInput">Valor en {{ currency }}</label>
+        <input
+          id="tipManualInput"
+          class="tip-manual__input"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="0"
+          [value]="tipManualDraft()"
+          (input)="tipManualDraft.set($any($event.target).value)" />
+        <button type="button" class="btn btn--cash tip-manual__apply" (click)="applyTipManual()">
+          Aplicar y continuar con el pago
+        </button>
+      </div>
+      <p class="error" *ngIf="paymentError() && tipModalVisible()">{{ paymentError() }}</p>
+      <button type="button" class="tip-cancel" (click)="closeTipModal()">Cancelar</button>
+    </div>
+  </div>
+
   <div *ngIf="cashierModalVisible()" class="modal-overlay" (click)="closeCashierModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <h3 class="modal-title">Pago en caja</h3>
@@ -58,6 +93,25 @@
           {{ item.lineTotal | currency:currentOrder.currency }}
           · {{ item.isDelivered ? 'Entregado' : 'Pendiente de entrega' }}
         </span>
+      </div>
+    </div>
+
+    <div class="order-totals">
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>{{ currentOrder.subtotal | currency:currentOrder.currency:'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="total-row" *ngIf="currentOrder.tax > 0">
+        <span>Impuesto</span>
+        <span>{{ currentOrder.tax | currency:currentOrder.currency:'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="total-row" *ngIf="currentOrder.deliveryFee > 0">
+        <span>Domicilio</span>
+        <span>{{ currentOrder.deliveryFee | currency:currentOrder.currency:'symbol-narrow':'1.0-0' }}</span>
+      </div>
+      <div class="total-row" *ngIf="currentOrder.tipAmount > 0">
+        <span>Propina</span>
+        <span>{{ currentOrder.tipAmount | currency:currentOrder.currency:'symbol-narrow':'1.0-0' }}</span>
       </div>
     </div>
 

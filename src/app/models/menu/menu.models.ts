@@ -8,6 +8,7 @@ export interface MenuResponse {
   enableDeliveryCard: boolean;
   enablePayAtCashier: boolean;
   avgPreparationMinutes: number;
+  suggestedTipPercent: number;
   paymentMethods: PaymentMethodOption[];
   categories: MenuCategory[];
   products: MenuProduct[];

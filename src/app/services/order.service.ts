@@ -24,7 +24,11 @@ export class OrderService {
     );
   }
 
-  requestPayment(orderId: string, paymentMethod: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/public/orders/${orderId}/request-payment`, { paymentMethod });
+  requestPayment(orderId: string, paymentMethod: string, tipMode?: 'NONE' | 'SUGGESTED' | 'CUSTOM', tipAmount?: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/public/orders/${orderId}/request-payment`, {
+      paymentMethod,
+      tipMode: tipMode ?? 'NONE',
+      tipAmount: tipAmount ?? null
+    });
   }
 }

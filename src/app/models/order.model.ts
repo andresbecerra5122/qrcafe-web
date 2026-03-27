@@ -12,6 +12,9 @@ export interface OrderPublicDto {
   currency: string;
   subtotal: number;
   tax: number;
+  deliveryFee: number;
+  tipAmount: number;
+  tipSource: string | null;
   total: number;
   createdAt: string;
   orderNumber: number;

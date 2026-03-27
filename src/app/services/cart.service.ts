@@ -18,6 +18,7 @@ function loadState(): CartState {
       enableDeliveryCard: true,
       enablePayAtCashier: false,
       avgPreparationMinutes: 15,
+      suggestedTipPercent: 10,
       paymentMethods: [],
       orderType: null,
       items: [],
@@ -37,6 +38,7 @@ function loadState(): CartState {
       enableDeliveryCard: parsed.enableDeliveryCard ?? true,
       enablePayAtCashier: parsed.enablePayAtCashier ?? false,
       avgPreparationMinutes: parsed.avgPreparationMinutes ?? 15,
+      suggestedTipPercent: parsed.suggestedTipPercent ?? 10,
       paymentMethods: parsed.paymentMethods ?? [],
       orderType: parsed.orderType ?? null,
       items: parsed.items ?? [],
@@ -55,6 +57,7 @@ function loadState(): CartState {
       enableDeliveryCard: true,
       enablePayAtCashier: false,
       avgPreparationMinutes: 15,
+      suggestedTipPercent: 10,
       paymentMethods: [],
       orderType: null,
       items: [],
@@ -93,6 +96,7 @@ export class CartService {
     enableDeliveryCard = true,
     enablePayAtCashier = false,
     avgPreparationMinutes = 15,
+    suggestedTipPercent = 10,
     paymentMethods: PaymentMethodOption[] = []
   ) {
     const s = this.state;
@@ -110,6 +114,7 @@ export class CartService {
         enableDeliveryCard,
         enablePayAtCashier,
         avgPreparationMinutes,
+        suggestedTipPercent,
         paymentMethods,
         orderType: null,
         items: [],
@@ -131,6 +136,7 @@ export class CartService {
       enableDeliveryCard,
       enablePayAtCashier,
       avgPreparationMinutes,
+      suggestedTipPercent,
       paymentMethods
     });
   }

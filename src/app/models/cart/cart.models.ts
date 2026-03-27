@@ -40,6 +40,7 @@ export interface CartState {
   enableDeliveryCard: boolean;
   enablePayAtCashier: boolean;
   avgPreparationMinutes: number;
+  suggestedTipPercent: number;
   paymentMethods: PaymentMethodOption[];
   orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY' | null;
   items: CartItem[];

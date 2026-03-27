@@ -30,6 +30,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   paymentError = signal<string | null>(null);
   activeOrder = signal<OrderPublicDto | null>(null);
   cashierModalVisible = signal(false);
+  tipModalVisible = signal(false);
+  pendingPaymentMethod = signal<string | null>(null);
+  tipManualOpen = signal(false);
+  tipManualDraft = signal('');
 
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private deliveryPhoneAlertShown = false;
@@ -177,13 +181,72 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   requestPayment(method: string) {
     const order = this.activeOrder();
     if (!order?.orderId) return;
+
+    if (this.orderType() === 'DINE_IN' && !this.isPayAtCashierEnabled()) {
+      this.pendingPaymentMethod.set(method);
+      this.tipManualOpen.set(false);
+      this.tipManualDraft.set('');
+      this.paymentError.set(null);
+      this.tipModalVisible.set(true);
+      return;
+    }
+
+    this.dispatchRequestPayment(method, 'NONE', undefined);
+  }
+
+  closeTipModal(): void {
+    this.tipModalVisible.set(false);
+    this.pendingPaymentMethod.set(null);
+    this.tipManualOpen.set(false);
+    this.paymentError.set(null);
+  }
+
+  chooseTipNone(): void {
+    const method = this.pendingPaymentMethod();
+    if (!method) return;
+    this.closeTipModal();
+    this.dispatchRequestPayment(method, 'NONE', undefined);
+  }
+
+  chooseTipSuggested(): void {
+    const method = this.pendingPaymentMethod();
+    if (!method) return;
+    this.closeTipModal();
+    this.dispatchRequestPayment(method, 'SUGGESTED', undefined);
+  }
+
+  toggleTipManual(): void {
+    this.tipManualOpen.update((v) => !v);
+    this.paymentError.set(null);
+  }
+
+  applyTipManual(): void {
+    const method = this.pendingPaymentMethod();
+    if (!method) return;
+    const parsed = Number(this.tipManualDraft().replace(',', '.').trim());
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      this.paymentError.set('Valor de propina inválido.');
+      return;
+    }
+    this.closeTipModal();
+    this.dispatchRequestPayment(method, 'CUSTOM', parsed);
+  }
+
+  private dispatchRequestPayment(
+    method: string,
+    tipMode: 'NONE' | 'SUGGESTED' | 'CUSTOM',
+    tipAmount?: number
+  ): void {
+    const order = this.activeOrder();
+    if (!order?.orderId) return;
+
     if (this.isPayAtCashierEnabled()) {
       this.cashierModalVisible.set(true);
     }
     this.requestingPayment.set(true);
     this.paymentError.set(null);
 
-    this.orderService.requestPayment(order.orderId, method).subscribe({
+    this.orderService.requestPayment(order.orderId, method, tipMode, tipAmount).subscribe({
       next: () => {
         this.requestingPayment.set(false);
         this.loadActiveOrder(true);
@@ -212,6 +275,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const params = new URLSearchParams();
     if (this.cart.restaurantId) params.set('restaurantId', this.cart.restaurantId);
     if (this.cart.tableToken) params.set('table', this.cart.tableToken);
+    if (this.orderType() === 'DELIVERY') params.set('mode', 'delivery');
     this.router.navigateByUrl(`/menu${params.toString() ? `?${params.toString()}` : ''}`);
   }
 
