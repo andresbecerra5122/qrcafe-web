@@ -73,7 +73,7 @@
   </div>
 
   <div class="section" *ngIf="activeOrder() as currentOrder">
-    <h2>Pedido actual de la mesa #{{ currentOrder.orderNumber }}</h2>
+    <h2>Pedido #{{ currentOrder.orderNumber }}</h2>
 
     <div class="status-line">
       Estado: <strong>{{ getStatusLabel(currentOrder.status) }}</strong>

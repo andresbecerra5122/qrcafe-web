@@ -37,6 +37,12 @@
     {{ waiterCallError }}
   </div>
 
+  <!-- Otro pedido abierto en la mesa vs. última factura en este dispositivo -->
+  <div *ngIf="tableOrderConflict" class="waiter-toast table-session-banner">
+    <p class="table-session-banner__text">{{ tableOrderConflict }}</p>
+    <button type="button" class="table-session-banner__btn" (click)="dismissTableOrderConflict()">Entendido</button>
+  </div>
+
   <main class="menu-content">
     <!-- Loading -->
     <div *ngIf="loading" class="menu-state">
@@ -87,16 +93,16 @@
               </div>
               <div class="product-actions">
                 <ng-container *ngIf="qtyOf(p.id) === 0; else qtyCtrl">
-                  <button class="btn btn--primary" (click)="addToCart(p)" [disabled]="!p.isAvailable">
+                  <button class="btn btn--primary" (click)="addToCart(p)" [disabled]="!p.isAvailable || isCartBlockedByForeignTableOrder()">
                     Agregar
                   </button>
                 </ng-container>
 
                 <ng-template #qtyCtrl>
                   <div class="qty">
-                    <button class="btn btn--ghost" (click)="dec(p)">−</button>
+                    <button class="btn btn--ghost" (click)="dec(p)" [disabled]="isCartBlockedByForeignTableOrder()">−</button>
                     <span class="qty__num">{{ qtyOf(p.id) }}</span>
-                    <button class="btn btn--ghost" (click)="inc(p)">+</button>
+                    <button class="btn btn--ghost" (click)="inc(p)" [disabled]="isCartBlockedByForeignTableOrder()">+</button>
                   </div>
                 </ng-template>
               </div>
@@ -116,9 +122,12 @@
         <div class="cart-bar__total">{{ formatMoney(cart.getSubtotal()) }}</div>
       </div>
 
-      <a class="btn btn--primary" [routerLink]="['/checkout']">
+      <a *ngIf="!isCartBlockedByForeignTableOrder()" class="btn btn--primary" [routerLink]="['/checkout']">
         Ver carrito
       </a>
+      <button *ngIf="isCartBlockedByForeignTableOrder()" type="button" class="btn btn--primary opacity-60 cursor-not-allowed" disabled title="Hay un conflicto con el pedido de la mesa">
+        Ver carrito
+      </button>
     </div>
   </div>
 </div>

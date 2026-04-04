@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { OrderPublicDto } from '../models/order.model';
 import { ActiveOrderSummary, CartItem, CartState, LastPaidOrderSummary, PaymentMethodOption } from '../models/cart/cart.models';
 
 const STORAGE_KEY = 'qrcafe_cart_v1';
@@ -200,6 +201,21 @@ export class CartService {
 
   clearActiveOrder() {
     this.setState({ ...this.state, activeOrder: null });
+  }
+
+  /** Cuando el pedido se mueve de mesa en servidor, actualiza token/número sin re-escanear QR. */
+  syncTableFromOrder(order: Pick<OrderPublicDto, 'orderType' | 'tableToken' | 'tableNumber'>): void {
+    if (order.orderType !== 'DINE_IN') return;
+    const token = order.tableToken;
+    const num = order.tableNumber;
+    if (!token && num == null) return;
+    const s = this.state;
+    if (token === s.tableToken && num === s.tableNumber) return;
+    this.setState({
+      ...s,
+      tableToken: token ?? s.tableToken,
+      tableNumber: num ?? s.tableNumber
+    });
   }
 
   setLastPaidOrder(lastPaidOrder: LastPaidOrderSummary) {

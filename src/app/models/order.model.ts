@@ -2,6 +2,7 @@ export interface OrderPublicDto {
   orderId: string;
   orderType: string;
   tableNumber: number | null;
+  tableToken: string | null;
   customerName: string | null;
   deliveryAddress: string | null;
   deliveryReference: string | null;

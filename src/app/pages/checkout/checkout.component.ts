@@ -416,6 +416,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     this.orderService.getOrderById(activeOrderId).subscribe({
       next: (order) => {
+        if (order.orderType === 'DINE_IN' && order.tableToken) {
+          this.cartService.syncTableFromOrder(order);
+        }
         this.activeOrder.set(order);
         this.activeOrderLoading.set(false);
         this.cartService.setActiveOrder({
